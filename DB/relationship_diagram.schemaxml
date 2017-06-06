@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemadesigner version="6.5">
+<source>
+<database charset="latin1" collation="latin1_swedish_ci">hdtqlks</database>
+</source>
+<canvas zoom="90">
+<tables>
+<table name="booking" view="standard">
+<left>288</left>
+<top>19</top>
+<width>177</width>
+<height>160</height>
+<sql_create_table>CREATE TABLE `booking` (
+  `booking_id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `state` tinyint(1) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`booking_id`),
+  KEY `customer_id` (`customer_id`),
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="bookingroom" view="standard">
+<left>510</left>
+<top>228</top>
+<width>175</width>
+<height>99</height>
+<sql_create_table>CREATE TABLE `bookingroom` (
+  `bookingroom_id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) DEFAULT NULL,
+  `room_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`bookingroom_id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `room_id` (`room_id`),
+  CONSTRAINT `bookingroom_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `bookingroom_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+<table name="customer" view="standard">
+<left>537</left>
+<top>0</top>
+<width>104</width>
+<height>193</height>
+<sql_create_table>CREATE TABLE `customer` (
+  `customer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `fname` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `lname` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `gender` bit(1) DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="bookingservice" view="standard">
+<left>343</left>
+<top>251</top>
+<width>134</width>
+<height>131</height>
+<sql_create_table>CREATE TABLE `bookingservice` (
+  `bookingservice_id` int(11) NOT NULL AUTO_INCREMENT,
+  `bookingroom_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`bookingservice_id`),
+  KEY `bookingroom_id` (`bookingroom_id`),
+  KEY `service_id` (`service_id`),
+  CONSTRAINT `bookingservice_ibfk_1` FOREIGN KEY (`bookingroom_id`) REFERENCES `bookingroom` (`bookingroom_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `bookingservice_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+<table name="guest" view="standard">
+<left>146</left>
+<top>0</top>
+<width>97</width>
+<height>208</height>
+<sql_create_table>CREATE TABLE `guest` (
+  `guest_id` int(11) NOT NULL AUTO_INCREMENT,
+  `fname` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `lname` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `gender` bit(1) DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `booking_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`guest_id`),
+  KEY `booking_id` (`booking_id`),
+  CONSTRAINT `guest_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="payment" view="standard">
+<left>716</left>
+<top>424</top>
+<width>115</width>
+<height>147</height>
+<sql_create_table>CREATE TABLE `payment` (
+  `payment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) DEFAULT NULL,
+  `real_end_date` datetime DEFAULT NULL,
+  `amount` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`payment_id`),
+  KEY `booking_id` (`booking_id`),
+  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookingroom` (`bookingroom_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="rank" view="standard">
+<left>720</left>
+<top>288</top>
+<width>80</width>
+<height>101</height>
+<sql_create_table>CREATE TABLE `rank` (
+  `rank_id` int(11) NOT NULL AUTO_INCREMENT,
+  `rank` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`rank_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="room" view="standard">
+<left>800</left>
+<top>42</top>
+<width>84</width>
+<height>177</height>
+<sql_create_table>CREATE TABLE `room` (
+  `room_id` int(11) NOT NULL AUTO_INCREMENT,
+  `room` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `tel` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `rank_id` int(11) DEFAULT NULL,
+  `type_id` int(11) DEFAULT NULL,
+  `price` int(11) DEFAULT NULL,
+  `state` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`room_id`),
+  KEY `rank_id` (`rank_id`),
+  KEY `type_id` (`type_id`),
+  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`rank_id`) REFERENCES `rank` (`rank_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `room_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `type` (`type_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="roomutility" view="standard">
+<left>913</left>
+<top>44</top>
+<width>112</width>
+<height>116</height>
+<sql_create_table>CREATE TABLE `roomutility` (
+  `roomutility_id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` int(11) DEFAULT NULL,
+  `utility_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`roomutility_id`),
+  KEY `room_id` (`room_id`),
+  KEY `utility_id` (`utility_id`),
+  CONSTRAINT `roomutility_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `roomutility_ibfk_2` FOREIGN KEY (`utility_id`) REFERENCES `utility` (`utility_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+<table name="service" view="standard">
+<left>190</left>
+<top>433</top>
+<width>94</width>
+<height>116</height>
+<sql_create_table>CREATE TABLE `service` (
+  `service_id` int(11) NOT NULL AUTO_INCREMENT,
+  `service` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `price` int(11) DEFAULT NULL,
+  PRIMARY KEY (`service_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="type" view="standard">
+<left>917</left>
+<top>262</top>
+<width>79</width>
+<height>101</height>
+<sql_create_table>CREATE TABLE `type` (
+  `type_id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+</table>
+<table name="user" view="standard">
+<left>26</left>
+<top>10</top>
+<width>82</width>
+<height>131</height>
+<sql_create_table>CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+<table name="utility" view="colnames">
+<left>1045</left>
+<top>57</top>
+<width>85</width>
+<height>101</height>
+<sql_create_table>CREATE TABLE `utility` (
+  `utility_id` int(11) NOT NULL AUTO_INCREMENT,
+  `utility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`utility_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1</sql_create_table>
+</table>
+</tables>
+</canvas>
+</schemadesigner>
