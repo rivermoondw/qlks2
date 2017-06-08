@@ -19,25 +19,24 @@
   `state` tinyint(1) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`booking_id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+  KEY `booking_ibfk_1` (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
 </table>
 <table name="bookingroom" view="standard">
 <left>510</left>
 <top>228</top>
 <width>175</width>
-<height>99</height>
+<height>137</height>
 <sql_create_table>CREATE TABLE `bookingroom` (
   `bookingroom_id` int(11) NOT NULL AUTO_INCREMENT,
   `booking_id` int(11) DEFAULT NULL,
   `room_id` int(11) DEFAULT NULL,
+  `state` int(11) DEFAULT NULL,
+  `amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`bookingroom_id`),
-  KEY `booking_id` (`booking_id`),
-  KEY `room_id` (`room_id`),
-  CONSTRAINT `bookingroom_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `bookingroom_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1</sql_create_table>
+  KEY `bookingroom_ibfk_1` (`booking_id`),
+  KEY `bookingroom_ibfk_2` (`room_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="customer" view="standard">
 <left>537</left>
@@ -54,24 +53,24 @@
   `phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
 </table>
 <table name="bookingservice" view="standard">
-<left>343</left>
-<top>251</top>
-<width>134</width>
-<height>131</height>
+<left>315</left>
+<top>232</top>
+<width>143</width>
+<height>150</height>
 <sql_create_table>CREATE TABLE `bookingservice` (
   `bookingservice_id` int(11) NOT NULL AUTO_INCREMENT,
   `bookingroom_id` int(11) DEFAULT NULL,
   `service_id` int(11) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`bookingservice_id`),
-  KEY `bookingroom_id` (`bookingroom_id`),
-  KEY `service_id` (`service_id`),
-  CONSTRAINT `bookingservice_ibfk_1` FOREIGN KEY (`bookingroom_id`) REFERENCES `bookingroom` (`bookingroom_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `bookingservice_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1</sql_create_table>
+  KEY `bookingservice_ibfk_1` (`bookingroom_id`),
+  KEY `bookingservice_ibfk_2` (`service_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="guest" view="standard">
 <left>146</left>
@@ -89,9 +88,8 @@
   `id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `booking_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`guest_id`),
-  KEY `booking_id` (`booking_id`),
-  CONSTRAINT `guest_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+  KEY `guest_ibfk_1` (`booking_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
 </table>
 <table name="payment" view="standard">
 <left>716</left>
@@ -105,9 +103,8 @@
   `amount` int(11) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`payment_id`),
-  KEY `booking_id` (`booking_id`),
-  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookingroom` (`bookingroom_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+  KEY `payment_ibfk_1` (`booking_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
 </table>
 <table name="rank" view="standard">
 <left>720</left>
@@ -132,13 +129,11 @@
   `rank_id` int(11) DEFAULT NULL,
   `type_id` int(11) DEFAULT NULL,
   `price` int(11) DEFAULT NULL,
-  `state` bit(1) DEFAULT NULL,
+  `state` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`room_id`),
-  KEY `rank_id` (`rank_id`),
-  KEY `type_id` (`type_id`),
-  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`rank_id`) REFERENCES `rank` (`rank_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `room_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `type` (`type_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
+  KEY `room_ibfk_1` (`rank_id`),
+  KEY `room_ibfk_2` (`type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci</sql_create_table>
 </table>
 <table name="roomutility" view="standard">
 <left>913</left>
@@ -150,10 +145,8 @@
   `room_id` int(11) DEFAULT NULL,
   `utility_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`roomutility_id`),
-  KEY `room_id` (`room_id`),
-  KEY `utility_id` (`utility_id`),
-  CONSTRAINT `roomutility_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `roomutility_ibfk_2` FOREIGN KEY (`utility_id`) REFERENCES `utility` (`utility_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `roomutility_ibfk_1` (`room_id`),
+  KEY `roomutility_ibfk_2` (`utility_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="service" view="standard">

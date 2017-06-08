@@ -29,13 +29,12 @@ CREATE TABLE `booking` (
   `state` tinyint(1) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`booking_id`),
-  KEY `customer_id` (`customer_id`),
-  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  KEY `booking_ibfk_1` (`customer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `booking` */
 
-insert  into `booking`(`booking_id`,`customer_id`,`quantity`,`start_date`,`end_date`,`state`,`create_date`) values (1,2,1,'2012-03-12','2012-03-12',1,'2017-05-12 11:55:28'),(2,3,3,'2022-02-22','2022-02-22',1,'2017-05-30 09:54:56'),(3,4,3,'2012-12-23','2012-12-23',1,'2017-05-31 00:08:02'),(4,5,3,'2017-05-31','2017-05-31',1,'2017-05-31 09:26:27'),(5,6,1,'2031-11-12','2031-11-12',0,'2017-05-31 09:31:11');
+insert  into `booking`(`booking_id`,`customer_id`,`quantity`,`start_date`,`end_date`,`state`,`create_date`) values (1,1,3,'1970-01-01','1970-01-01',1,'2017-06-07 23:34:59'),(2,2,2,'2012-02-12','2012-02-12',1,'2017-06-08 08:01:23'),(3,3,4,'2031-12-23','2031-12-23',1,'2017-06-08 08:07:25');
 
 /*Table structure for table `bookingroom` */
 
@@ -48,15 +47,13 @@ CREATE TABLE `bookingroom` (
   `state` int(11) DEFAULT NULL,
   `amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`bookingroom_id`),
-  KEY `booking_id` (`booking_id`),
-  KEY `room_id` (`room_id`),
-  CONSTRAINT `bookingroom_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `bookingroom_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+  KEY `bookingroom_ibfk_1` (`booking_id`),
+  KEY `bookingroom_ibfk_2` (`room_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 /*Data for the table `bookingroom` */
 
-insert  into `bookingroom`(`bookingroom_id`,`booking_id`,`room_id`,`state`,`amount`) values (1,1,3,NULL,NULL),(2,1,5,NULL,NULL),(3,1,1,NULL,NULL),(4,2,1,NULL,NULL),(5,2,2,NULL,NULL),(6,2,3,NULL,NULL),(7,3,2,NULL,NULL),(8,3,4,NULL,NULL),(9,3,5,NULL,NULL),(10,4,1,NULL,NULL),(11,4,2,NULL,NULL),(12,4,5,NULL,NULL),(13,5,1,NULL,NULL);
+insert  into `bookingroom`(`bookingroom_id`,`booking_id`,`room_id`,`state`,`amount`) values (1,1,1,1,100000),(2,1,3,1,200000),(3,1,5,1,300000),(4,2,2,1,100000),(5,2,4,1,200000),(6,3,1,1,100000),(7,3,3,1,200000),(8,3,5,1,300000),(9,3,7,1,300000);
 
 /*Table structure for table `bookingservice` */
 
@@ -67,16 +64,14 @@ CREATE TABLE `bookingservice` (
   `bookingroom_id` int(11) DEFAULT NULL,
   `service_id` int(11) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
+  `count` int(11) DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`bookingservice_id`),
-  KEY `bookingroom_id` (`bookingroom_id`),
-  KEY `service_id` (`service_id`),
-  CONSTRAINT `bookingservice_ibfk_1` FOREIGN KEY (`bookingroom_id`) REFERENCES `bookingroom` (`bookingroom_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `bookingservice_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `service` (`service_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+  KEY `bookingservice_ibfk_1` (`bookingroom_id`),
+  KEY `bookingservice_ibfk_2` (`service_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*Data for the table `bookingservice` */
-
-insert  into `bookingservice`(`bookingservice_id`,`bookingroom_id`,`service_id`,`create_date`) values (3,4,1,'2017-05-30 12:12:08'),(4,7,1,'2017-05-31 00:12:13'),(5,7,3,'2017-05-31 00:13:46'),(6,13,1,'2017-05-31 09:31:41'),(7,13,3,'2017-05-31 09:31:41');
 
 /*Table structure for table `customer` */
 
@@ -92,11 +87,11 @@ CREATE TABLE `customer` (
   `phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `customer` */
 
-insert  into `customer`(`customer_id`,`fname`,`lname`,`id`,`dob`,`gender`,`phone`,`address`) values (1,'wer','134234','123','1970-01-01','','123123','1231244'),(2,'Hoang','Loc','1','2031-12-13','','0123456789','Hai Phong'),(3,'Hoang','Loc','277357285800457','2022-02-22','','0123456789','Hai Phong'),(4,'Hoang','Loc','666624680067334','1996-02-27','','0123456789','Hai Phong'),(5,'Hoang','Loc','277357285800457','1996-07-26','','0123456789','Hai Phong'),(6,'Hoang','Loc','277357285800457','2012-03-31','','0123456789','Hai Phong');
+insert  into `customer`(`customer_id`,`fname`,`lname`,`id`,`dob`,`gender`,`phone`,`address`) values (1,'Hoàng Văn','Khoa','666624680067334','1970-01-01','','0123456789','Hai Phong'),(2,'Hoang','Loc','277357285800457','1996-02-27','','0123456789','Hai Phong'),(3,'Hoang','Loc','277357285800457','1970-01-01','','0123456789','Hai Phong');
 
 /*Table structure for table `guest` */
 
@@ -113,13 +108,12 @@ CREATE TABLE `guest` (
   `id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `booking_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`guest_id`),
-  KEY `booking_id` (`booking_id`),
-  CONSTRAINT `guest_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `booking` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `guest_ibfk_1` (`booking_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `guest` */
 
-insert  into `guest`(`guest_id`,`fname`,`lname`,`dob`,`phone`,`gender`,`address`,`id`,`booking_id`) values (1,'Hoang','Lộc','1970-01-01','0123','','Hà Nội','544826632319605',3);
+insert  into `guest`(`guest_id`,`fname`,`lname`,`dob`,`phone`,`gender`,`address`,`id`,`booking_id`) values (1,'Hoang','Loc','2016-12-23','0123456789','','Hai Phong','277357285800457',1);
 
 /*Table structure for table `payment` */
 
@@ -132,13 +126,12 @@ CREATE TABLE `payment` (
   `amount` int(11) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`payment_id`),
-  KEY `booking_id` (`booking_id`),
-  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookingroom` (`bookingroom_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  KEY `payment_ibfk_1` (`booking_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `payment` */
 
-insert  into `payment`(`payment_id`,`booking_id`,`real_end_date`,`amount`,`create_date`) values (1,1,'2017-05-30 00:00:00',600000,'2017-05-30 01:04:33'),(2,2,'2017-05-31 00:00:00',400000,'2017-05-31 00:07:01'),(3,3,'2017-05-31 00:00:00',630000,'2017-05-31 00:26:29'),(4,4,'2017-05-31 00:00:00',500000,'2017-05-31 09:27:53');
+insert  into `payment`(`payment_id`,`booking_id`,`real_end_date`,`amount`,`create_date`) values (1,1,'2017-06-08 00:00:00',100000,'2017-06-08 07:47:42'),(2,2,'2017-06-08 00:00:00',NULL,'2017-06-08 08:06:12'),(3,3,'2017-06-08 00:00:00',900000,'2017-06-08 08:07:49');
 
 /*Table structure for table `rank` */
 
@@ -165,17 +158,15 @@ CREATE TABLE `room` (
   `rank_id` int(11) DEFAULT NULL,
   `type_id` int(11) DEFAULT NULL,
   `price` int(11) DEFAULT NULL,
-  `state` bit(1) DEFAULT NULL,
+  `state` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`room_id`),
-  KEY `rank_id` (`rank_id`),
-  KEY `type_id` (`type_id`),
-  CONSTRAINT `room_ibfk_1` FOREIGN KEY (`rank_id`) REFERENCES `rank` (`rank_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `room_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `type` (`type_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `room_ibfk_1` (`rank_id`),
+  KEY `room_ibfk_2` (`type_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 /*Data for the table `room` */
 
-insert  into `room`(`room_id`,`room`,`tel`,`rank_id`,`type_id`,`price`,`state`) values (1,'101','101',1,1,100000,''),(2,'102','102',2,2,100000,'\0'),(3,'201','201',3,1,200000,'\0'),(4,'202','202',1,3,200000,'\0'),(5,'301','301',3,1,300000,'\0'),(6,'302','302',4,3,350000,'\0'),(7,'401','401',1,1,300000,'\0');
+insert  into `room`(`room_id`,`room`,`tel`,`rank_id`,`type_id`,`price`,`state`) values (1,'101','101',1,1,100000,0),(2,'102','102',2,2,100000,0),(3,'201','201',3,1,200000,0),(4,'202','202',1,3,200000,0),(5,'301','301',3,1,300000,0),(6,'302','302',4,3,350000,0),(7,'401','401',1,1,300000,0);
 
 /*Table structure for table `roomutility` */
 
@@ -186,10 +177,8 @@ CREATE TABLE `roomutility` (
   `room_id` int(11) DEFAULT NULL,
   `utility_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`roomutility_id`),
-  KEY `room_id` (`room_id`),
-  KEY `utility_id` (`utility_id`),
-  CONSTRAINT `roomutility_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `roomutility_ibfk_2` FOREIGN KEY (`utility_id`) REFERENCES `utility` (`utility_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `roomutility_ibfk_1` (`room_id`),
+  KEY `roomutility_ibfk_2` (`utility_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `roomutility` */
