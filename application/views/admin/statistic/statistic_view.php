@@ -107,6 +107,5 @@
     </div>
     <!-- left -->
     <div class="col-md-6">
-
     </div>
 </div>

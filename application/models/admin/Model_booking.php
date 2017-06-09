@@ -37,7 +37,7 @@ class Model_booking extends CI_Model{
             'customer_id' => (int)$customer_id,
             'quantity' => count($list_room),
             'start_date' => date('Y-m-d',strtotime($date['start_date'])),
-            'end_date' => date('Y-m-d',strtotime($date['start_date'])),
+            'end_date' => date('Y-m-d',strtotime($date['end_date'])),
             'state' => 0,
             'create_date' => date('Y-m-d H:i:s', time())
         ));
@@ -69,7 +69,7 @@ class Model_booking extends CI_Model{
                 );
             }
             $this->db->where_in('room_id', $list_room)->update('room', array(
-                'state' => 2
+                'state' => 1
             ));
             $flag = $this->db->affected_rows();
             if ($flag > 0) {
