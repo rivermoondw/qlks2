@@ -6,6 +6,7 @@ class Statistic extends Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/model_statistic');
+        $this->data['active_parent'] = 'statistic';
     }
 
     public function index(){

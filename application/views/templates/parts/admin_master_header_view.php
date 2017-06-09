@@ -185,6 +185,7 @@
                         </li>
                     </ul>
                 </li>
+                <li class="<?php echo (isset($active_parent) && $active_parent == 'statistic') ? 'active' : ''; ?>"><a href="<?php echo base_url(); ?>admin/statistic"><span>Thống kê</span></a></li>
             </ul>
         </section>
         <!-- /.sidebar -->
