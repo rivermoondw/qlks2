@@ -12,9 +12,13 @@ class Home extends Admin_Controller
 
     public function index($page = 1)
     {
+        $this->load->helper('form');
         $this->load->library('pagination');
         $this->data['content_header'] = 'Trang chủ';
-        $this->data['before_head'] = '<style>
+        $this->data['before_head'] = '
+<!-- Select2 -->
+  <link rel="stylesheet" href="' . base_url() . 'assets/admin/plugins/select2/select2.min.css">
+  <style>
 	.custom {
 		color:#fff;
 		color: rgba(255,255,255,0.95);
@@ -24,6 +28,16 @@ class Home extends Admin_Controller
 		color: rgba(255,255,255,1);
 	}
   </style>';
+        $this->data['before_body'] = '<!-- Select2 -->
+<script src="' . base_url() . 'assets/admin/plugins/select2/select2.full.min.js"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $(".select2").select2({
+        minimumResultsForSearch: Infinity
+    });
+  });
+</script>';
 
         $config['full_tag_open'] = '<ul class="pagination pull-right no-margin">';
         $config['full_tag_close'] = '</ul>';
@@ -55,7 +69,17 @@ class Home extends Admin_Controller
         $page = ($page > $total_page)?$total_page:$page;
         $page = ($page < 1)?1:$page;
         $page = $page - 1;
-        $this->data['list_room'] = $this->model_room->get_list(($page*$config['per_page']), $config['per_page']);
+        $this->data['rank'] = $this->model_room->rank_list();
+        $this->data['type'] = $this->model_room->type_list();
+        $rank_id = NULL;
+        $type_id = NULL;
+        $state = NULL;
+        if ($this->input->post('submit')){
+            if ($this->input->post('rank_id')) $rank_id = $this->input->post('rank_id');
+            if ($this->input->post('type_id')) $type_id = $this->input->post('type_id');
+            if ($this->input->post('state')) $state = $this->input->post('state');
+        }
+        $this->data['list_room'] = $this->model_room->get_list(($page*$config['per_page']), $config['per_page'], $state, $rank_id, $type_id);
         $this->render('admin/home_view');
     }
 }

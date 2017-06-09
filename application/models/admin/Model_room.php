@@ -26,15 +26,24 @@ class Model_room extends CI_Model
             ->get()->result_array();
     }
 
-    public function get_list($start, $limit)
+    public function get_list($start, $limit, $state = NULL, $rank_id = NULL, $type_id = NULL)
     {
-        return $this->db->select('room_id, room, tel, rank, type, price, state')
+        $this->db->select('room_id, room, tel, rank, type, price, state')
             ->from('room')
             ->join('rank', 'room.rank_id = rank.rank_id')
-            ->join('type', 'room.type_id = type.type_id')
-            ->limit($limit, $start)
-            ->order_by('room', 'ASC')
-            ->get()->result_array();
+            ->join('type', 'room.type_id = type.type_id');
+        if (isset($state)&&$state!='all'){
+            $this->db->where('state', $state);
+        }
+        if (isset($rank_id)&&$rank_id!='all'){
+            $this->db->where('rank.rank_id', $rank_id);
+        }
+        if (isset($type_id)&&$type_id!='all'){
+            $this->db->where('type.type_id', $type_id);
+        }
+            $this->db->limit($limit, $start)
+            ->order_by('room', 'ASC');
+        return    $this->db->get()->result_array();
     }
 
     public function get_room($id = 0)
