@@ -28,42 +28,28 @@ class Model_payment extends CI_Model{
                     'message' => 'Lỗi giao dịch'
                 );
             }
-            if (count($list_room)){
-                $this->db->where_in('room_id', $list_room)->update('room', array(
-                    'state' => 0
-                ));
-            }
-            $flag1 = $this->db->affected_rows();
-            if ($flag1 > 0){
-                $this->db->insert('payment', array(
-                    'booking_id' => $booking_id,
-                    'real_end_date' => date('Y-m-d', time()),
-                    'amount' => $amount,
-                    'create_date' => date('Y-m-d H:i:s', time())
-                ));
-                $flag2 = $this->db->affected_rows();
-                if ($flag2 > 0) {
-                    $this->db->trans_commit();
-                    return array(
-                        'type' => 'success',
-                        'message' => 'Giao dịch thành công'
-                    );
-                } else {
-                    $this->db->trans_rollback();
-                    return array(
-                        'type' => 'error',
-                        'message' => 'Lỗi giao dịch'
-                    );
-                }
-            }
-            else{
+            $this->db->insert('payment', array(
+                'booking_id' => $booking_id,
+                'real_end_date' => date('Y-m-d', time()),
+                'amount' => $amount,
+                'create_date' => date('Y-m-d H:i:s', time())
+            ));
+            $flag2 = $this->db->affected_rows();
+            if ($flag2 > 0) {
+                $this->db->trans_commit();
+                return array(
+                    'type' => 'success',
+                    'message' => 'Giao dịch thành công'
+                );
+            } else {
                 $this->db->trans_rollback();
                 return array(
                     'type' => 'error',
-                    'message' => 'Lỗi giao dịch flag 1'
+                    'message' => 'Lỗi giao dịch'
                 );
             }
-        } else {
+        }
+        else {
             return array(
                 'type' => 'error',
                 'message' => 'Lỗi giao dịch flag'
@@ -72,7 +58,7 @@ class Model_payment extends CI_Model{
     }
 
     public function get_payment_list($start, $limit){
-        return $this->db->select('payment_id, fname, lname, state, payment.create_date, amount')
+        return $this->db->select('payment_id, fname, lname, state, payment.create_date, amount, booking.booking_id')
             ->from('payment')
             ->join('booking', 'booking.booking_id = payment.booking_id')
             ->join('customer', 'customer.customer_id = booking.customer_id')
@@ -91,13 +77,52 @@ class Model_payment extends CI_Model{
             ->get()->row_array();
     }
 
-    public function get_payment_service($booking_id){
-        return $this->db->select('room, service, service.price')
+    public function get_payment_service($bookingroom_id){
+        return $this->db->select('room, service, service.price, count')
             ->from('bookingroom')
             ->join('room', 'room.room_id = bookingroom.room_id')
             ->join('bookingservice', 'bookingservice.bookingroom_id = bookingroom.bookingroom_id')
             ->join('service', 'service.service_id = bookingservice.service_id')
+            ->where('bookingroom.bookingroom_id', $bookingroom_id)
+            ->get()->result_array();
+    }
+
+    public function get_booking_room($bookingroom_id){
+        return $this->db->select('room.room_id, price')
+            ->from('bookingroom')
+            ->join('room', 'room.room_id = bookingroom.room_id')
+            ->where('bookingroom_id', $bookingroom_id)
+            ->get()->row_array();
+    }
+
+    public function payment_room($bookingroom_id, $data){
+        $this->db->where('bookingroom_id', (int)$bookingroom_id)->update('bookingroom', $data);
+        $flag = $this->db->affected_rows();
+        if ($flag > 0) {
+            return array(
+                'type' => 'success',
+                'message' => 'Cập nhật dữ liệu thành công'
+            );
+        } else {
+            return array(
+                'type' => 'error',
+                'message' => 'Lỗi cập nhật dữ liệu'
+            );
+        }
+    }
+
+    public function get_sum_amount($booking_id){
+        return $this->db->select_sum('amount')
+            ->from('bookingroom')
             ->where('booking_id', $booking_id)
+            ->get()->row_array();
+    }
+
+    public function get_empty_room($booking_id){
+        return $this->db->select('room_id')
+            ->from('bookingroom')
+            ->where('booking_id', $booking_id)
+            ->where('state', 0)
             ->get()->result_array();
     }
 

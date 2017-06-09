@@ -248,6 +248,7 @@ class Room extends Admin_Controller
             $this->load->model('admin/model_service');
             $booking_detail = $this->model_booking->get_booking_room($room_id);
             $this->data['booking_id'] = $booking_detail['booking_id'];
+            $this->data['bookingroom_id'] = $booking_detail['bookingroom_id'];
             $this->data['customer'] = $this->model_booking->get_customer($booking_detail['booking_id']);
             $this->data['list_service'] = $this->model_booking->get_list_service($booking_detail['bookingroom_id']);
             $this->data['list_service_aval'] = $this->model_service->get_service_list();
@@ -259,7 +260,8 @@ class Room extends Admin_Controller
                         $list_service[] = array(
                             'bookingroom_id' => $booking_detail['bookingroom_id'],
                             'service_id' => $val,
-                            'create_date' => date('Y-m-d H:i:s', time())
+                            'create_date' => date('Y-m-d H:i:s', time()),
+                            'count' => 1
                         );
                     }
 
@@ -268,6 +270,22 @@ class Room extends Admin_Controller
                     $url = 'admin/room/detail/'.$room_id;
                     redirect($url);
                 }
+            }
+            if ($this->input->post('add')){
+                $this->model_booking->add_count_service($this->input->post('add'));
+                $url = 'admin/room/detail/'.$room_id;
+                redirect($url);
+            }
+            if ($this->input->post('sub')){
+                $count = $this->model_booking->count_service($this->input->post('sub'));
+                if ($count['count'] > 1){
+                    $this->model_booking->sub_count_service($this->input->post('sub'));
+                }
+                else{
+                    $this->model_booking->del_service($this->input->post('sub'));
+                }
+                $url = 'admin/room/detail/'.$room_id;
+                redirect($url);
             }
         }
         $this->render('admin/room/detail_view');

@@ -32,15 +32,15 @@
                         foreach ($list_payment as $key => $val) {
                             ?>
                             <tr>
-                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['payment_id']; ?>"
+                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['booking_id']; ?>"
                                        style="color: #333"><b><?php echo htmlspecialchars($val['fname'] . ' ' . $val['lname']); ?></b></a>
                                 </td>
-                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['payment_id']; ?>"
+                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['booking_id']; ?>"
                                        style="color: #333"><?php echo htmlspecialchars($val['create_date']); ?></a></td>
-                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['payment_id']; ?>"
+                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['booking_id']; ?>"
                                        style="color: #333"><?php echo ($val['state'] == 0) ? 'Chưa trả phòng' : 'Đã trả phòng'; ?></a>
                                 </td>
-                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['payment_id']; ?>"
+                                <td><a href="<?php echo base_url() . 'admin/payment/detail/' . $val['booking_id']; ?>"
                                        style="color: #333"><?php echo htmlspecialchars($val['amount']); ?></a></td>
                             </tr>
                             <?php

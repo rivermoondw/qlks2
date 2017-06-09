@@ -110,35 +110,61 @@ class Payment extends Admin_Controller{
         $this->data['page_title'] = 'Trả phòng';
         $this->data['content_header'] = 'Thông tin trả phòng';
         $this->data['customer'] = $this->model_booking->get_customer($booking_id);
-        $amount = NULL;
         $this->data['list_room'] = $this->model_booking->get_list_room($booking_id);
         if (isset($this->data['list_room'])&&count($this->data['list_room'])){
-            $amount = 0;
             foreach ($this->data['list_room'] as $key => $val){
-                $amount += $val['price'];
+                $this->data['list_room'][$key]['list_service'] = $this->model_payment->get_payment_service($val['bookingroom_id']);
+            }
+            foreach ($this->data['list_room'] as $key => $val){
+                $amount = $val['price'];
+                foreach ($val['list_service'] as $k => $vl){
+                    $amount += $vl['price']*$vl['count'];
+                }
+                $this->data['list_room'][$key]['amount'] = $amount;
             }
         }
-        $this->data['list_service'] = $this->model_payment->get_payment_service($booking_id);
-        if (isset($this->data['list_service'])&&count($this->data['list_service'])){
-            if (!isset($amount)){
-                $amount = 0;
-            }
-            foreach ($this->data['list_service'] as $key => $val){
-                $amount += $val['price'];
-            }
-        }
-        $this->data['amount'] = isset($amount)?$amount:'Lỗi';
         $this->data['state'] = $booking['state'];
+        $this->data['amount'] = $this->model_payment->get_sum_amount($booking_id);
+        $check = $this->model_payment->get_empty_room($booking_id);
         if ($this->input->post('submit')){
-            $flag = $this->model_payment->pay($booking_id, $this->data['amount']);
-            $this->session->set_flashdata('message_flashdata', $flag);
-            redirect('admin/payment');
+            if ($check){
+                $flag = array(
+                    'type' => 'error',
+                    'message' => 'Phải trả phòng hết. Xin mời bấm trả phòng'
+                );
+                $this->session->set_flashdata('message_flashdata', $flag);
+                $url = 'admin/payment/detail/'.$booking_id;
+                redirect($url);
+                $flag = $this->model_payment->pay($booking_id, $this->data['amount']['amount']);
+                $this->session->set_flashdata('message_flashdata', $flag);
+                redirect('admin/payment');
+            }
+            else
+            {
+                $flag = $this->model_payment->pay($booking_id, $this->data['amount']['amount']);
+                $this->session->set_flashdata('message_flashdata', $flag);
+                redirect('admin/payment');
+            }
         }
         $this->render('admin/payment/detail_view');
     }
 
-    public function payment_room($room_id)
+    public function paymentroom($bookingroom_id)
     {
-
+        $room = $this->model_payment->get_booking_room($bookingroom_id);
+        $temp = $this->model_booking->get_list_service($bookingroom_id);
+        $amount = $room['price'];
+        foreach ($temp as $key=>$val){
+            $amount += $val['price']*$val['count'];
+        }
+        $data = array(
+            'state' => 1,
+            'amount' => $amount
+        );
+        $this->model_payment->payment_room($bookingroom_id, $data);
+        $this->model_booking->free_room($room);
+        $booking_id = $this->model_booking->get_booking_id($bookingroom_id);
+        $url = 'admin/payment/detail/'.$booking_id['booking_id'];
+        redirect($url);
     }
 }

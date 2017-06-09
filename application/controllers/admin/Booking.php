@@ -295,13 +295,6 @@ class Booking extends Admin_Controller {
         redirect('admin/booking/detail/'.$guest['booking_id']);
     }
 
-    public function del_service($bookingroom_id){
-        $service_room = $this->model_booking->get_service_room($bookingroom_id);
-        $flag = $this->model_booking->del_service($service_room['bookingservice_id']);
-        $this->session->set_flashdata('message_flashdata', $flag);
-        redirect('admin/room/detail/'.$service_room['room_id']);
-    }
-
 
     public function del($id){
         $booking = $this->model_booking->get_booking($id);
@@ -317,10 +310,5 @@ class Booking extends Admin_Controller {
         $this->model_booking->free_room($list_room);
         $this->session->set_flashdata('message_flashdata', $flag);
         redirect('admin/booking');
-    }
-
-    public function test(){
-        $guest = $this->model_booking->guest(1);
-        print_r($guest);
     }
 }

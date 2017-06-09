@@ -1,3 +1,4 @@
+<div class="ajax">
 <div class="row">
     <div class="col-xs-12">
         <div class="box box-primary">
@@ -5,6 +6,14 @@
             $att = array('role' => 'form');
             echo form_open('', $att);
             ?>
+            <div class="box-header">
+                <div class="box-tools pull-right">
+                    <div class="has-feedback">
+                        <input type="text" class="form-control input-sm" placeholder="Tìm kiếm theo tên khách hàng" id="search_name" name="search_name">
+                        <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                    </div>
+                </div>
+            </div>
             <div class="box-body">
                 <?php
                 $message_flashdata = $this->session->flashdata('message_flashdata');
@@ -99,3 +108,4 @@
     <!-- /.col -->
 </div>
 <!-- /.row -->
+</div>

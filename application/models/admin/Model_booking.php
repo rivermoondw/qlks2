@@ -55,7 +55,8 @@ class Model_booking extends CI_Model{
             foreach ($list_room as $key => $val){
                 array_push($data, array(
                     'booking_id' => $booking_id,
-                    'room_id' => $val
+                    'room_id' => $val,
+                    'state' => 0,
                 ));
             }
             $this->db->insert_batch('bookingroom', $data);
@@ -93,8 +94,8 @@ class Model_booking extends CI_Model{
         }
     }
 
-    public function get_list_room($booking_id = 0){
-        return $this->db->select('room.room_id, room, price')
+    public function get_list_room($booking_id){
+        return $this->db->select('room.room_id, room, price, room.state, bookingroom_id')
             ->from('room')
             ->join('bookingroom', 'bookingroom.room_id = room.room_id')
             ->where('booking_id', $booking_id)
@@ -102,8 +103,8 @@ class Model_booking extends CI_Model{
             ->get()->result_array();
     }
 
-    public function get_list_service($bookingroom_id = 0){
-        return $this->db->select('bookingservice_id, service.service_id, service, price, bookingroom.bookingroom_id')
+    public function get_list_service($bookingroom_id){
+        return $this->db->select('bookingservice_id, service.service_id, service, price, bookingroom.bookingroom_id, count')
             ->from('service')
             ->join('bookingservice', 'bookingservice.service_id = service.service_id')
             ->join('bookingroom', 'bookingroom.bookingroom_id = bookingservice.bookingroom_id')
@@ -267,7 +268,7 @@ class Model_booking extends CI_Model{
             ->from('booking')
             ->join('bookingroom', 'bookingroom.booking_id = booking.booking_id')
             ->join('room', 'bookingroom.room_id = room.room_id')
-            ->where('booking.state', 0)->where('room.state', 1)
+            ->where('room.room_id', $room_id)->where('booking.state', 0)->where('room.state', 1)
             ->get()->row_array();
     }
 
@@ -277,6 +278,32 @@ class Model_booking extends CI_Model{
             ->join('bookingroom', 'bookingroom.bookingroom_id = bookingservice.bookingroom_id')
             ->join('room', 'bookingroom.room_id = room.room_id')
             ->where('bookingroom.bookingroom_id', $bookingroom)
+            ->get()->row_array();
+    }
+
+    public function add_count_service($bookingservice_id){
+        $this->db->set('count', 'count+1', FALSE);
+        $this->db->where('bookingservice_id', $bookingservice_id);
+        $this->db->update('bookingservice');
+    }
+
+    public function sub_count_service($bookingservice_id){
+        $this->db->set('count', 'count-1', FALSE);
+        $this->db->where('bookingservice_id', $bookingservice_id);
+        $this->db->update('bookingservice');
+    }
+
+    public function count_service($bookingservice_id){
+        return $this->db->select('count')
+            ->from('bookingservice')
+            ->where('bookingservice_id', $bookingservice_id)
+            ->get()->row_array();
+    }
+
+    public function get_booking_id($bookingroom_id){
+        return $this->db->select('booking_id')
+            ->from('bookingroom')
+            ->where('bookingroom_id', $bookingroom_id)
             ->get()->row_array();
     }
 
