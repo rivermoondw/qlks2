@@ -202,6 +202,7 @@ class Booking extends Admin_Controller {
 </script>';
         $this->data['content_header'] = 'Thông tin đặt phòng';
         $this->data['booking_id'] = $booking_id;
+        $this->data['state'] = $booking['state'];
         $this->load->model('admin/model_service');
         $this->data['list_service_hotel'] = $this->model_service->get_service_list();
         if ($this->input->post('add_service')) {
@@ -223,6 +224,24 @@ class Booking extends Admin_Controller {
         $this->data['customer'] = $this->model_booking->get_customer($booking_id);
         $this->data['list_room'] = $this->model_booking->get_list_room($booking_id);
         $this->data['list_service'] = $this->model_booking->get_list_service($booking_id);
+        if ($this->input->post('check')){
+            $list_room = array();
+            foreach ($this->data['list_room'] as $key => $val){
+                $list_room[] = array(
+                    'room_id' => $val['room_id'],
+                    'state' => 1
+                );
+            }
+            $flag = $this->model_booking->check($booking_id, $list_room);
+            $this->session->set_flashdata('message_flashdata', $flag);
+            $url = 'admin/booking/detail/'.$booking_id;
+            redirect($url);
+        }
+        if ($this->input->post('cancel')){
+            $flag = $this->model_booking->cancel($booking_id);
+            $this->session->set_flashdata('message_flashdata', $flag);
+            redirect('admin/booking');
+        }
         $this->render('admin/booking/detail_view');
     }
 

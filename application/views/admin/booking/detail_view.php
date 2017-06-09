@@ -1,8 +1,23 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="box">
+        <div class="box box-solid">
             <div class="box-body">
-                <a href="<?php echo base_url(); ?>admin/payment/detail/<?php echo $booking_id;?>"><button type="button" class="btn btn-success"><i class="fa fa-check"></i> Thanh toán</button></a>
+                <?php
+                $att = array('role' => 'form');
+                echo form_open('', $att);
+                if ($state == 2){
+                ?>
+                    <button type="submit" name="check" value="check" class="btn btn-success"><i class="fa fa-check"></i> Nhận phòng</button>
+                    <button type="submit" name="cancel" value="cancel" class="btn btn-success"><i class="fa fa-check"></i> Hủy đặt phòng</button>
+                <?php
+                }
+                elseif ($state == 0){
+                ?>
+                    <a href="<?php echo base_url(); ?>admin/payment/detail/<?php echo $booking_id;?>"><button type="button" class="btn btn-success"><i class="fa fa-check"></i> Thanh toán</button></a>
+                <?php
+                }
+                echo form_close();
+                ?>
             </div>
         </div>
     </div>

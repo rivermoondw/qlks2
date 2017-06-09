@@ -23,7 +23,18 @@
                         <td><?php echo $room['rank'];?></td>
                         <td><?php echo $room['type'];?></td>
                         <td><?php echo $room['price'];?></td>
-                        <td><?php echo ($room['state']==0)?'Còn trống':'Đang thuê';?></td>
+                        <td>
+                            <?php
+                            switch ($room['state']){
+                                case 0: echo 'Còn trống';
+                                break;
+                                case 1: echo 'Đang thuê';
+                                break;
+                                case 2: echo 'Chưa nhận phòng';
+                                break;
+                            }
+                            ?>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -32,51 +43,56 @@
     </div>
 </div>
 <?php
+if ($room['state']!=0) {
+    ?>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <a href="<?php echo base_url(); ?>admin/payment/paymentroom/<?php echo $bookingroom_id; ?>">
+                        <button type="button" class="btn btn-success" id="confirm"><i class="fa fa-check"></i> Trả phòng
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary box-solid">
+                <div class="box-header">
+                    <h3 class="box-title">Thông tin khách hàng</h3>
+                </div>
+                <div class="box-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Họ tên</th>
+                            <th>Chứng minh thư</th>
+                            <th>Ngày sinh</th>
+                            <th>Giới tính</th>
+                            <th>Số điện thoại</th>
+                            <th>Địa chỉ</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><?php echo $customer['fname'] . ' ' . $customer['lname']; ?></td>
+                            <td><?php echo $customer['id']; ?></td>
+                            <td><?php echo $customer['dob']; ?></td>
+                            <td><?php echo $customer['gender']; ?></td>
+                            <td><?php echo $customer['phone']; ?></td>
+                            <td><?php echo $customer['address']; ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
 if ($room['state']==1){
-?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="box">
-            <div class="box-body">
-                <a href="<?php echo base_url(); ?>admin/payment/paymentroom/<?php echo $bookingroom_id;?>"><button type="button" class="btn btn-success" id="confirm"><i class="fa fa-check"></i> Trả phòng</button></a>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="box box-primary box-solid">
-            <div class="box-header">
-                <h3 class="box-title">Thông tin khách hàng</h3>
-            </div>
-            <div class="box-body">
-                <table class="table table-condensed">
-                    <thead>
-                    <tr>
-                        <th>Họ tên</th>
-                        <th>Chứng minh thư</th>
-                        <th>Ngày sinh</th>
-                        <th>Giới tính</th>
-                        <th>Số điện thoại</th>
-                        <th>Địa chỉ</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><?php echo $customer['fname'].' '.$customer['lname'];?></td>
-                        <td><?php echo $customer['id'];?></td>
-                        <td><?php echo $customer['dob'];?></td>
-                        <td><?php echo $customer['gender'];?></td>
-                        <td><?php echo $customer['phone'];?></td>
-                        <td><?php echo $customer['address'];?></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<?php
 $att = array('role' => 'form');
 echo form_open('', $att);
 ?>

@@ -78,6 +78,7 @@ class Home extends Admin_Controller
             if ($this->input->post('rank_id')) $rank_id = $this->input->post('rank_id');
             if ($this->input->post('type_id')) $type_id = $this->input->post('type_id');
             if ($this->input->post('state')) $state = $this->input->post('state');
+            if ($this->input->post('state')==0) $state = $this->input->post('state');
         }
         $this->data['list_room'] = $this->model_room->get_list(($page*$config['per_page']), $config['per_page'], $state, $rank_id, $type_id);
         $this->render('admin/home_view');

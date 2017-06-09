@@ -40,6 +40,7 @@
                                 <option value="all">Tìm kiếm tất cả</option>
                                 <option value="0">Còn trống</option>
                                 <option value="1">Đang thuê</option>
+                                <option value="2">Đang được đặt</option>
                             </select>
                         </div>
                     </div>

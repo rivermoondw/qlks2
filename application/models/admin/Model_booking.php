@@ -38,7 +38,7 @@ class Model_booking extends CI_Model{
             'quantity' => count($list_room),
             'start_date' => date('Y-m-d',strtotime($date['start_date'])),
             'end_date' => date('Y-m-d',strtotime($date['end_date'])),
-            'state' => 0,
+            'state' => 2,
             'create_date' => date('Y-m-d H:i:s', time())
         ));
         $flag = $this->db->affected_rows();
@@ -69,7 +69,7 @@ class Model_booking extends CI_Model{
                 );
             }
             $this->db->where_in('room_id', $list_room)->update('room', array(
-                'state' => 1
+                'state' => 2
             ));
             $flag = $this->db->affected_rows();
             if ($flag > 0) {
@@ -184,10 +184,11 @@ class Model_booking extends CI_Model{
     }
 
     public function get_booking_list($start, $limit, $start_date = NULL, $end_date = NULL){
+        $state = array(0,2);
         $this->db->select('booking_id, fname, lname, start_date, end_date, state, create_date')
             ->from('booking')
             ->join('customer', 'customer.customer_id = booking.customer_id')
-            ->where('state', 0);
+            ->where_in('state', $state);
         if (isset($start_date)&&isset($end_date)){
             $this->db->where('start_date >=', $start_date);
             $this->db->where('start_date <=', $end_date);
@@ -272,7 +273,7 @@ class Model_booking extends CI_Model{
             ->from('booking')
             ->join('bookingroom', 'bookingroom.booking_id = booking.booking_id')
             ->join('room', 'bookingroom.room_id = room.room_id')
-            ->where('room.room_id', $room_id)->where('booking.state', 0)->where('room.state', 1)
+            ->where('room.room_id', $room_id)->where('booking.state !=', 1)->where('room.state !=', 0)
             ->get()->row_array();
     }
 
@@ -309,6 +310,60 @@ class Model_booking extends CI_Model{
             ->from('bookingroom')
             ->where('bookingroom_id', $bookingroom_id)
             ->get()->row_array();
+    }
+
+    public function check($booking_id, $list_room){
+        $this->db->update_batch('room', $list_room, 'room_id');
+        $flag = $this->db->affected_rows();
+        if ($flag > 0) {
+            $this->db->where('booking_id', (int)$booking_id)->update('booking', array(
+                'state' => 0
+            ));
+            $flag1 = $this->db->affected_rows();
+            if ($flag1 > 0){
+                return array(
+                    'type' => 'success',
+                    'message' => 'Nhận phòng thành công'
+                );
+            }
+            else{
+                return array(
+                    'type' => 'error',
+                    'message' => 'Lỗi nhận phòng'
+                );
+            }
+        } else {
+            return array(
+                'type' => 'error',
+                'message' => 'Lỗi nhận phòng'
+            );
+        }
+    }
+
+    public function cancel($booking_id){
+        $this->db->delete('bookingroom', array('booking_id' => (int)$booking_id));
+        $flag = $this->db->affected_rows();
+        if ($flag > 0) {
+            $this->db->delete('booking', array('booking_id' => (int)$booking_id));
+            $flag1 = $this->db->affected_rows();
+            if ($flag1 > 0) {
+                return array(
+                    'type' => 'success',
+                    'message' => 'Hủy đặt phòng thành công'
+                );
+            }
+            else{
+                return array(
+                    'type' => 'error',
+                    'message' => 'Lỗi'
+                );
+            }
+        } else {
+            return array(
+                'type' => 'error',
+                'message' => 'Lỗi'
+            );
+        }
     }
 
     public function total()

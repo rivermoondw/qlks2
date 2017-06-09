@@ -20,6 +20,14 @@ class Model_statistic extends CI_Model
          return   $this->db->get()->row_array();
     }
 
+    public function sum_amount($start_date, $end_date){
+        return $this->db->select_sum('amount')
+            ->from('payment')
+            ->where('create_date >=', $start_date)
+            ->where('create_date <=', $end_date)
+            ->get()->row_array();
+    }
+
     public function total()
     {
         return $this->db->get('room')->num_rows();

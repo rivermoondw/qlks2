@@ -243,7 +243,7 @@ class Room extends Admin_Controller
 </script>';
         $this->data['room'] = $room;
         $this->data['content_header'] = 'Chi tiết phòng';
-        if ($room['state']==1){
+        if ($room['state']!=0){
             $this->load->model('admin/model_booking');
             $this->load->model('admin/model_service');
             $booking_detail = $this->model_booking->get_booking_room($room_id);
@@ -284,6 +284,12 @@ class Room extends Admin_Controller
                 else{
                     $this->model_booking->del_service($this->input->post('sub'));
                 }
+                $url = 'admin/room/detail/'.$room_id;
+                redirect($url);
+            }
+            if ($this->input->post('check')){
+                $flag = $this->model_booking->check($room_id, $booking_detail['booking_id']);
+                $this->session->set_flashdata('message_flashdata', $flag);
                 $url = 'admin/room/detail/'.$room_id;
                 redirect($url);
             }

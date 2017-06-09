@@ -65,14 +65,6 @@
             $att = array('role' => 'form');
             echo form_open('', $att);
             ?>
-            <div class="box-header">
-                <div class="box-tools pull-right">
-                    <div class="has-feedback">
-                        <input type="text" class="form-control input-sm" placeholder="Tìm kiếm theo tên khách hàng" id="search_name" name="search_name">
-                        <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                    </div>
-                </div>
-            </div>
             <div class="box-body">
                 <?php
                 $message_flashdata = $this->session->flashdata('message_flashdata');
@@ -99,7 +91,6 @@
                         <th>Ngày trả</th>
                         <th>Phòng đặt</th>
                         <th>Tình trạng</th>
-                        <th>Thao tác</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -133,13 +124,17 @@
                                     </a>
                                 </td>
                                 <td><a href="<?php echo base_url() . 'admin/booking/detail/' . $val['booking_id']; ?>"
-                                       style="color: #333"><?php echo ($val['state'] == 0) ? 'Chưa trả phòng' : 'Đã trả phòng'; ?></a>
-                                </td>
-                                <td>
-                                    <a href="<?php echo base_url(); ?>admin/booking/del/<?php echo $val['booking_id']; ?>">
-                                        <button type="button" class="btn btn-default btn-xs del-btn"><i
-                                                    class="fa fa-times"></i> Xóa
-                                        </button>
+                                    style="color: #333">
+                                        <?php
+                                        switch ($val['state']){
+                                            case 0: echo 'Chưa thanh toán';
+                                            break;
+                                            case 1: echo 'Đã thanh toán';
+                                            break;
+                                            case 2: echo 'Chưa nhận phòng';
+                                            break;
+                                        }
+                                        ?>
                                     </a>
                                 </td>
                             </tr>
@@ -147,7 +142,7 @@
                         }
                     }
                     else{
-                        echo '<tr><td colspan="8">Không có dữ liệu</td></tr>';
+                        echo '<tr><td colspan="7">Không có dữ liệu</td></tr>';
                     }
                     ?>
                     </tbody>
