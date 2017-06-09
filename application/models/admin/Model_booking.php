@@ -69,7 +69,7 @@ class Model_booking extends CI_Model{
                 );
             }
             $this->db->where_in('room_id', $list_room)->update('room', array(
-                'state' => 1
+                'state' => 2
             ));
             $flag = $this->db->affected_rows();
             if ($flag > 0) {

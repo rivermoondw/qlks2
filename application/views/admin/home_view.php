@@ -28,10 +28,16 @@
                     <a href="<?php echo base_url().'admin/room/detail/'.$val['room_id']; ?>" class="custom"><span class="info-box-icon"><i class="fa fa-home"></i></span></a>
                 <?php
                 }
-                else{
+                else if ($val['state'] == 1){
                 ?>
                     <div class="info-box bg-red">
                         <a href="<?php echo base_url().'admin/room/detail/'.$val['room_id'];?>" class="custom"><span class="info-box-icon"><i class="fa fa-home"></i></span></a>
+                <?php
+                }
+                else{
+                ?>
+                        <div class="info-box bg-yellow">
+                            <a href="<?php echo base_url().'admin/room/detail/'.$val['room_id'];?>" class="custom"><span class="info-box-icon"><i class="fa fa-home"></i></span></a>
                 <?php
                 }
                 ?>
