@@ -183,14 +183,18 @@ class Model_booking extends CI_Model{
             ->get()->row_array();
     }
 
-    public function get_booking_list($start, $limit){
-        return $this->db->select('booking_id, fname, lname, start_date, end_date, state, create_date')
+    public function get_booking_list($start, $limit, $start_date = NULL, $end_date = NULL){
+        $this->db->select('booking_id, fname, lname, start_date, end_date, state, create_date')
             ->from('booking')
             ->join('customer', 'customer.customer_id = booking.customer_id')
-            ->where('state', 0)
-            ->limit($limit, $start)
-            ->order_by('create_date', 'DESC')
-            ->get()->result_array();
+            ->where('state', 0);
+        if (isset($start_date)&&isset($end_date)){
+            $this->db->where('start_date >=', $start_date);
+            $this->db->where('start_date <=', $end_date);
+        }
+            $this->db->limit($limit, $start)
+            ->order_by('create_date', 'DESC');
+        return  $this->db->get()->result_array();
     }
 
     public function add_service($list_service){

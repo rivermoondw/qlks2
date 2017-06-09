@@ -14,6 +14,21 @@
             echo form_open('', $att);
             ?>
             <div class="box-body">
+                <?php
+                $message_flashdata = $this->session->flashdata('message_flashdata');
+                if (isset($message_flashdata) && count($message_flashdata)){
+                    if ($message_flashdata['type'] == 'success'){
+                        ?>
+                        <div class="alert alert-success alert-dismissible"><i class="icon fa fa-check"></i> <?php echo $message_flashdata['message']; ?></div>
+                        <?php
+                    }
+                    else{
+                        ?>
+                        <div class="alert alert-danger alert-dismissible"><i class="icon fa fa-ban"></i> <?php echo $message_flashdata['message']; ?></div>
+                        <?php
+                    }
+                }
+                ?>
                 <div class="form-group <?php echo (form_error('fname')) ? 'has-error' : ''; ?>">
                     <label>Họ đệm</label>
                     <input type="text" class="form-control" placeholder="Nhập họ đệm" name="fname"

@@ -26,9 +26,31 @@ class Booking extends Admin_Controller {
 <script src="' . base_url() . 'assets/admin/plugins/datatables/dataTables.bootstrap.min.js"></script>
 <!-- iCheck -->
 <script src="' . base_url() . 'assets/admin/plugins/iCheck/icheck.min.js"></script>
+<!-- Select2 -->
+<script src="'.base_url('assets/admin').'/plugins/select2/select2.full.min.js"></script>
+<!-- InputMask -->
+<script src="'.base_url('assets/admin').'/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="'.base_url('assets/admin').'/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="'.base_url('assets/admin').'/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+<!-- date-range-picker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+<script src="'.base_url('assets/admin').'/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap color picker -->
+<script src="'.base_url('assets/admin').'/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+<!-- bootstrap time picker -->
+<script src="'.base_url('assets/admin').'/plugins/timepicker/bootstrap-timepicker.min.js"></script>
 <!-- page script -->
 <script>
   $(function () {
+       //Initialize Select2 Elements
+    $(".select2").select2();
+
+    //Datemask dd/mm/yyyy
+    $("#datemask").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+    //Datemask2 mm/dd/yyyy
+    $("#datemask2").inputmask("mm/dd/yyyy", {"placeholder": "mm/dd/yyyy"});
+    //Money Euro
+    $("[data-mask]").inputmask();
       $(".del-btn").click(function(){
           if(!confirm ("Bạn có muốn xóa không?")) event.preventDefault();
       });
@@ -109,7 +131,32 @@ class Booking extends Admin_Controller {
         $page = ($page > $total_page)?$total_page:$page;
         $page = ($page < 1)?1:$page;
         $page = $page - 1;
-        $this->data['list_booking'] = $this->model_booking->get_booking_list(($page*$config['per_page']), $config['per_page']);
+        $start_date = NULL;
+        $end_date = NULL;
+        if ($this->input->post('submit')){
+            if (!empty($this->input->post('start_date'))&&!empty($this->input->post('end_date'))) {
+                $str_start_date = str_replace('/', '-', $this->input->post('start_date'));
+                $str_end_date = str_replace('/', '-', $this->input->post('end_date'));
+                $start_date = date('Y-m-d', strtotime($str_start_date));
+                $end_date = date('Y-m-d', strtotime($str_end_date));
+                if ($start_date > $end_date) {
+                    $flag = array(
+                        'type' => 'error',
+                        'message' => 'Ngày kết thúc phải lớn hơn ngày bắt đầu'
+                    );
+                    $this->session->set_flashdata('message_date', $flag);
+                }
+            }
+            else
+            {
+                $flag = array(
+                    'type' => 'error',
+                    'message' => 'Xin mời nhập ngày bắt đầu và ngày kết thúc'
+                );
+                $this->session->set_flashdata('message_date', $flag);
+            }
+        }
+        $this->data['list_booking'] = $this->model_booking->get_booking_list(($page*$config['per_page']), $config['per_page'], $start_date, $end_date);
         foreach ($this->data['list_booking'] as $key => $val){
             $this->data['list_booking'][$key]['list_room'] = $this->model_booking->get_list_room($val['booking_id']);
         }
@@ -225,13 +272,27 @@ class Booking extends Admin_Controller {
             $this->form_validation->set_rules('end_date','Ngày trả', 'trim|required');
             $this->form_validation->set_rules('room_id[]','Phòng thuê', 'required');
             $this->form_validation->set_error_delimiters('<div class="text-red"><i class="fa fa-times-circle-o"></i> <b>', '</b></div>');
-            if ($this->form_validation->run() === FALSE){
-                $this->render('admin/booking/registry_view');
-            }
-            else{
-                $flag = $this->model_booking->registry();
-                $this->session->set_flashdata('message_flashdata', $flag);
-                redirect('admin/booking');
+            if ($this->form_validation->run() === TRUE){
+                if (!empty($this->input->post('start_date'))&&!empty($this->input->post('end_date'))) {
+                    $str_start_date = str_replace('/', '-', $this->input->post('start_date'));
+                    $str_end_date = str_replace('/', '-', $this->input->post('end_date'));
+                    $start_date = date('Y-m-d', strtotime($str_start_date));
+                    $end_date = date('Y-m-d', strtotime($str_end_date));
+                    if ($start_date > $end_date) {
+                        $flag = array(
+                            'type' => 'error',
+                            'message' => 'Ngày trả phải lớn hơn ngày đến'
+                        );
+                        $this->session->set_flashdata('message_flashdata', $flag);
+                        redirect('admin/booking/registry');
+                    }
+                    else
+                    {
+                        $flag = $this->model_booking->registry();
+                        $this->session->set_flashdata('message_flashdata', $flag);
+                        redirect('admin/booking');
+                    }
+                }
             }
         }
         $this->render('admin/booking/registry_view');
