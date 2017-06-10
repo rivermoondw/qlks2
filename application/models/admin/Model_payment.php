@@ -57,15 +57,19 @@ class Model_payment extends CI_Model{
         }
     }
 
-    public function get_payment_list($start, $limit){
-        return $this->db->select('payment_id, fname, lname, state, payment.create_date, amount, booking.booking_id')
+    public function get_payment_list($start, $limit, $start_date = NULL, $end_date = NULL){
+        $this->db->select('payment_id, fname, lname, state, payment.create_date, amount, booking.booking_id')
             ->from('payment')
             ->join('booking', 'booking.booking_id = payment.booking_id')
             ->join('customer', 'customer.customer_id = booking.customer_id')
-            ->where('state', 1)
-            ->limit($limit, $start)
-            ->order_by('payment.create_date', 'DESC')
-            ->get()->result_array();
+            ->where('state', 1);
+        if (isset($start_date)&&isset($end_date)){
+            $this->db->where('payment.create_date >=', $start_date);
+            $this->db->where('payment.create_date <=', $end_date);
+        }
+            $this->db->limit($limit, $start)
+            ->order_by('payment.create_date', 'DESC');
+         return   $this->db->get()->result_array();
     }
 
     public function get_payment_detail($booking_id){
